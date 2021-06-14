@@ -1,5 +1,6 @@
 import os
 import pathlib
+import json
 
 import requests
 from flask import Flask, session, abort, redirect, request
@@ -8,12 +9,16 @@ from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
 
+
+with open('flask_secret.json', 'r') as myfile:
+    CLIENT_SECRETS = json.load(myfile)
+
 app = Flask("PrideMatch")
-app.secret_key = "SECRETKEY00"
+app.secret_key = (CLIENT_SECRETS["APP_SECRET"])
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
-GOOGLE_CLIENT_ID = "674053831867-83f1qrth7i5sttth5l42pbo5sv8ulbl3.apps.googleusercontent.com"
+GOOGLE_CLIENT_ID = (CLIENT_SECRETS["GOOGLE_CLIENT_ID"])
 
 client_secret_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
 flow = Flow.from_client_secrets_file(
