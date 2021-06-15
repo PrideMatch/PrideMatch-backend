@@ -1,3 +1,4 @@
+from sqlalchemy.orm import backref
 from app import db
 
 class User(db.Model):
@@ -20,11 +21,13 @@ class User(db.Model):
     email = db.Column(db.String(35), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=True)
     gender = db.Column(db.String(20), nullable=True)
-    age = db.Column(db.Integer(), nullable=True)
+    age = db.Column(db.Integer, nullable=True)
     profile_picture = db.Column(db.LargeBinary(), nullable=True)
     orientation = db.Column(db.String(20), nullable=True)
-    about_me = db.Column(db.String(150), nullable=True)
-    games = db.Column(db.String(255), nullable=False)
+    about_me = db.Column(db.String(255), nullable=True)
     socials = db.relationship('Socials', backref='user', lazy=True)
+    games = db.relationship('UserGames', backref='user', lazy=True)
+    added_users = db.relationship('AddedUsers', lazy=True)
+    teammates = db.relationship('Teammates', lazy=True)
 
 
