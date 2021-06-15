@@ -13,5 +13,5 @@ class Socials(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True)
     facebook = db.Column(db.String(100), nullable=True)
     instagram = db.Column(db.String(100), nullable=True)
-    twitter = db.Colun(db.String(100), nullable=True)
+    twitter = db.Column(db.String(100), nullable=True)
     discord_id = db.Column(db.String(20), nullable=True)
