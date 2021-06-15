@@ -27,7 +27,7 @@ class User(db.Model):
     about_me = db.Column(db.String(255), nullable=True)
     socials = db.relationship('Socials', backref='user', lazy=True)
     games = db.relationship('UserGames', backref='user', lazy=True)
-    added_users = db.relationship('AddedUsers', lazy=True)
     teammates = db.relationship('Teammates', lazy=True)
+    added_users = db.relationship('AddedUsers', lazy='noload')
 
 
