@@ -1,5 +1,3 @@
-from operator import add
-from sqlalchemy.orm import backref
 from app import db
 
 class User(db.Model):
