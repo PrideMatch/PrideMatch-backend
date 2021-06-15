@@ -1,7 +1,7 @@
 from app import db
 
 class User(db.Model):
-    def __init__(self, id, username, password, email, socials, games, gender = None, age = None, profile_picture = None, orientation = None, about_me = None):
+    def __init__(self, id, username, email, socials, games, password = None, gender = None, age = None, profile_picture = None, orientation = None, about_me = None):
         self.id = id
         self.username = username
         self.password = password
@@ -18,7 +18,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(35), unique=True, nullable=False)
-    password = db.Column(db.String(60), nullable=False)
+    password = db.Column(db.String(60), nullable=True)
     gender = db.Column(db.String(20), nullable=True)
     age = db.Column(db.Integer(), nullable=True)
     profile_picture = db.Column(db.LargeBinary(), nullable=True)
