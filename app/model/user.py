@@ -1,8 +1,10 @@
+from operator import add
 from sqlalchemy.orm import backref
 from app import db
 
 class User(db.Model):
-    def __init__(self, id, username, email, socials, games, password = None, gender = None, age = None, profile_picture = None, orientation = None, about_me = None):
+    def __init__(self, id, username, email, socials, password = None, gender = None, age = None, 
+    profile_picture = None, orientation = None, about_me = None, games = None, teammates = None, added_users = None):
         self.id = id
         self.username = username
         self.password = password
@@ -14,6 +16,8 @@ class User(db.Model):
         self.about_me = about_me
         self.socials = socials
         self.games = games
+        self.teammates = teammates
+        self.added_users = added_users
         
 
     id = db.Column(db.Integer, primary_key=True)
