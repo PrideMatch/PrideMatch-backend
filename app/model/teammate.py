@@ -6,6 +6,6 @@ class Teammate(db.Model):
         self.user_id = id
         self.teammate_id = teammate_id
         
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    teammate_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    id = db.Column(db.String(50), primary_key=True)
+    user_id = db.Column(db.String(50), db.ForeignKey('user.id'))
+    teammate_id = db.Column(db.String(50), nullable=False)

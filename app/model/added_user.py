@@ -6,6 +6,6 @@ class AddedUser(db.Model):
         self.user_id = user_id
         self.followed_user_id = followed_user_id
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    followed_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    id = db.Column(db.String(50), primary_key=True)
+    user_id = db.Column(db.String(50), db.ForeignKey('user.id'))
+    followed_user_id = db.Column(db.String(50), nullable=False)
