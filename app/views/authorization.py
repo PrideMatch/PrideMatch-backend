@@ -1,10 +1,10 @@
-import secrets
+import server_secrets
 import jwt
 from functools import wraps
 from flask import jsonify, request
 from google.auth.transport import requests
 from google.oauth2 import id_token
-from app.model.user import User
+from app.model import User
 
 
 def token_required(f):
@@ -19,13 +19,13 @@ def token_required(f):
         jwt_token = False
 
         try:
-            id_token.veriify_oauth2_token(token, requests.Request(), secrets.CLIENT_ID)
+            id_token.veriify_oauth2_token(token, requests.Request(), server_secrets.CLIENT_ID)
             google_token = True
         except:
             pass
 
         try: 
-            data=jwt.decode(token, secrets.SECRET_KEY)
+            data=jwt.decode(token, server_secrets.SECRET_KEY)
             user = User.query.filter_by(id=data['id']).first()
             jwt_token = True
         except:
