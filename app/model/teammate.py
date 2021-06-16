@@ -8,4 +8,4 @@ class Teammate(db.Model):
         
     id = db.Column(db.String(50), primary_key=True)
     user_id = db.Column(db.String(50), db.ForeignKey('user.id'))
-    teammate_id = db.Column(db.String(50), db.ForeignKey('user.id'))
+    teammate_id = db.Column(db.String(50), nullable=False)

@@ -8,4 +8,4 @@ class AddedUser(db.Model):
 
     id = db.Column(db.String(50), primary_key=True)
     user_id = db.Column(db.String(50), db.ForeignKey('user.id'))
-    followed_user_id = db.Column(db.String(50), db.ForeignKey('user.id'))
+    followed_user_id = db.Column(db.String(50), nullable=False)
