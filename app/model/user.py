@@ -1,3 +1,4 @@
+from flask.json import jsonify
 from app import db
 
 class User(db.Model):
@@ -18,7 +19,7 @@ class User(db.Model):
         self.added_users = added_users
         
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(50), primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(35), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=True)
@@ -31,5 +32,3 @@ class User(db.Model):
     games = db.relationship('UserGames', backref='user', lazy=True)
     teammates = db.relationship('Teammates', lazy=True)
     added_users = db.relationship('AddedUsers', lazy='noload')
-
-
