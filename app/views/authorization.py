@@ -4,6 +4,7 @@ from functools import wraps
 from flask import jsonify, request
 from google.auth.transport import requests
 from google.oauth2 import id_token
+from app.model.user import User
 
 
 def token_required(f):
@@ -24,7 +25,8 @@ def token_required(f):
             pass
 
         try: 
-            jwt.decode(token, secrets.SECRET_KEY)
+            data=jwt.decode(token, secrets.SECRET_KEY)
+            user = User.query.filter_by(id=data['id']).first()
             jwt_token = True
         except:
             pass
