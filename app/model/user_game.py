@@ -6,4 +6,4 @@ class UserGame(db.Model):
         self.user_id = user_id
         
     id = db.Column(db.String(50), primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.String(50), db.ForeignKey('user.id'))
