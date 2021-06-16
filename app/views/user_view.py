@@ -1,15 +1,18 @@
+from app.model.socials import Socials
 import secrets
 from app.model.user import User
 from flask.helpers import make_response
 from app import app
+from app import db
 from app.views.authorization import token_required
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
+import uuid
 
-@app.route('/login')
+@app.route('/login', methods=['GET'])
 def login():
     username = request.form.get('username')
     password = request.form.get('password')
@@ -27,3 +30,20 @@ def login():
         return jsonify({'token' : token.decode('UTF-8')})
 
     return make_response('Invalid username or password', 401)
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+
+    hashed_pass = generate_password_hash(data['password'], method='sha256')
+
+    s_json = data['socials']
+    socials = Socials(id=s_json['id'], user_id=s_json['user_id'], facebook=s_json['facebook'], instagram=s_json['instagram'], 
+    twitter=s_json['twitter'], discord_id=s_json['discord_id'])
+
+    user = User(id=str(uuid.uuid4(), username=data['username'], email=data['email'], password=hashed_pass,
+     gender=data['gender'], age=int(data['age']), profile_picture=data['profile_picture'], orientation=data['orientation'],
+     about_me=data['about_me'], socials=socials))
+    
+    db.session.add(user)
+    db.session.commit()
