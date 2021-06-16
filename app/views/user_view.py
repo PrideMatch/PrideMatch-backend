@@ -11,20 +11,20 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 @app.route('/login', methods=['GET'])
 def login():
-    username = request.form.get('username')
-    password = request.form.get('password')
+    username = request.json['username']
+    password = request.json['password']
 
     if not username or not password:
         return make_response('Invalid request', 400)
     
-    user = User.query.filter_by(name=username).first()
+    user = User.query.filter_by(username=username).first()
 
     if not user:
         return make_response('Invalid username or password', 400)
 
     if  check_password_hash(user.password, password):
         token = jwt.encode({'id': user.id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(hours=2)}, server_secrets.SECRET_KEY)
-        return jsonify({'token' : token.decode('UTF-8')})
+        return jsonify({'token' : token})
 
     return make_response('Invalid username or password', 401)
 
