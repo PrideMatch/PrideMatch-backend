@@ -7,7 +7,8 @@ from app.model import Socials, User
 from flask import jsonify, request
 from flask.helpers import make_response
 from werkzeug.security import check_password_hash, generate_password_hash
-
+from app.views.json_parser import user_to_json
+from app.views.authorization import token_required
 
 @app.route('/login', methods=['GET'])
 def login():
@@ -47,3 +48,12 @@ def register():
 
     return make_response('User created', 201)
 
+@app.route('/user', methods=['GET'])
+@token_required
+def get_user():
+    user_id = request.args.get('user_id')
+
+    user = User.query.filter_by(id=user_id).first()
+    
+    return make_response(user_to_json(user), 200)
+   
