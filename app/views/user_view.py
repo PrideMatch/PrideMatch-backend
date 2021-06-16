@@ -1,16 +1,13 @@
-from app.model.socials import Socials
-import secrets
-from app.model.user import User
-from flask.helpers import make_response
-from app import app
-from app import db
-from app.views.authorization import token_required
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-import jwt
-from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 import uuid
+import jwt
+import server_secrets
+from app import app, db
+from app.model import Socials, User
+from flask import jsonify, request
+from flask.helpers import make_response
+from werkzeug.security import check_password_hash, generate_password_hash
+
 
 @app.route('/login', methods=['GET'])
 def login():
@@ -26,7 +23,7 @@ def login():
         return make_response('Invalid username or password', 400)
 
     if  check_password_hash(user.password, password):
-        token = jwt.encode({'id': user.id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(hours=2)}, secrets.SECRET_KEY)
+        token = jwt.encode({'id': user.id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(hours=2)}, server_secrets.SECRET_KEY)
         return jsonify({'token' : token.decode('UTF-8')})
 
     return make_response('Invalid username or password', 401)
@@ -41,9 +38,12 @@ def register():
     socials = Socials(id=s_json['id'], user_id=s_json['user_id'], facebook=s_json['facebook'], instagram=s_json['instagram'], 
     twitter=s_json['twitter'], discord_id=s_json['discord_id'])
 
-    user = User(id=str(uuid.uuid4(), username=data['username'], email=data['email'], password=hashed_pass,
-     gender=data['gender'], age=int(data['age']), profile_picture=data['profile_picture'], orientation=data['orientation'],
-     about_me=data['about_me'], socials=socials))
+    user = User(id=str(uuid.uuid4()), username=data['username'], email=data['email'], password=hashed_pass,
+     gender=data['gender'], age=data['age'], profile_picture=data['profile_picture'], orientation=data['orientation'],
+     about_me=data['about_me'], socials=socials)
     
     db.session.add(user)
     db.session.commit()
+
+    return make_response('User created', 201)
+
