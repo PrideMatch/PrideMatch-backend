@@ -206,3 +206,29 @@ def add_usergame():
         return make_response('Game added', 201)
 
     return make_response('Game is already added', 409)
+
+@app.route('/usergame', methods=['GET'])
+@token_required
+def remove_usergame():
+    user_id = request.args.get('user_id')
+
+    data = request.get_json()
+
+    if not user_id and not data:
+        return make_response("Bad request", 400)
+
+    user_games_models = UserGame.query.filter_by(user_id=user_id).all()
+
+    games = []
+
+    if user_games_models:
+        for g in user_games_models:
+            games.append(g.id)
+    
+    if data.get('game') in games:
+        user_game = UserGame.query.filter_by(id=data.get('game'), user_id=user_id).first()
+        db.session.delete(user_game)
+        db.session.commit()
+        return make_response('Game removed', 200)
+
+    return make_response('Game is not on the list', 404)
