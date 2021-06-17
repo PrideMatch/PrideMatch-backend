@@ -97,6 +97,22 @@ def update_user():
 
     return make_response("User updated", 200)
 
+@app.route('/user', methods=['DELETE'])
+@token_required
+def delete_user():
+    user_id = request.args.get('user_id') 
+
+    if not user_id:
+        return make_response("Bad request", 400)
     
+    user = User.query.filter_by(id=user_id).first()
+
+    if not user:
+        return make_response("Bad request", 400)
+
+    db.session.delete(user)
+    db.session.commit()
+
+    return make_response("User removed", 200)
 
    
