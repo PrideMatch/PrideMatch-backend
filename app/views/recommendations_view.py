@@ -58,19 +58,33 @@ def add_to_ignored():
     if not user_id or not data:
         return make_response('Bad request', 400)
 
-    users_json_object = json.loads(data)
-    users_list = users_json_object['users']
+    currently_ignored_users = IgnoredUser.query.filter_by(user_id=user_id).all()
 
-    if not users_list:
+    ignored_users_json_object = json.loads(data)
+    ignored_users_list = ignored_users_json_object.get('users')
+
+    if not ignored_users_list:
         return make_response('Bad request', 400)
 
-    for x in users_list:
-        ignored_user = IgnoredUser(id=str(uuid.uuid4()), user_id=user_id, ignored_user_id=x)
-        db.session.add(ignored_user)
+    for i in ignored_users_list:
+        ignored_user_entry = IgnoredUser.query.filter_by(user_id=user_id, ignored_user_id=i).first()
 
-    db.session.commit()
+        if not ignored_user_entry:
+            new_ignored_user_entry = IgnoredUser(id = str(uuid.uuid4()), user_id=user_id, ignored_user_id=i, number_of_ignores=1)
+
+            db.session.add(new_ignored_user_entry)
+            db.session.commit()
+
+        else:
+            ignored_user_entry.number_of_ignores+=1
+            db.session.commit()
 
     return make_response('Users ignored', 200)
+
+
+
+
+
 
 
     
