@@ -3,8 +3,8 @@ import uuid
 import jwt
 import server_secrets
 from app import app, db
-from app.model import Socials, User
-from flask import jsonify, request
+from app.model import Socials, User, Interest, UserGame, interest
+from flask import json, jsonify, request
 from flask.helpers import make_response
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.views.json_parser import user_to_json
@@ -33,15 +33,35 @@ def login():
 def register():
     data = request.get_json()
 
-    hashed_pass = generate_password_hash(data['password'], method='sha256')
+    user_id = str(uuid.uuid4())
 
-    s_json = data['socials']
-    socials = Socials(id=s_json['id'], user_id=s_json['user_id'], facebook=s_json['facebook'], instagram=s_json['instagram'], 
-    twitter=s_json['twitter'], discord_id=s_json['discord_id'])
+    hashed_pass = ''
+    if data.get('password'):
+        hashed_pass = generate_password_hash(data.get('password'), method='sha256')
 
-    user = User(id=str(uuid.uuid4()), username=data['username'], email=data['email'], password=hashed_pass,
-     gender=data['gender'], age=data['age'], profile_picture=data['profile_picture'], orientation=data['orientation'],
-     about_me=data['about_me'], socials=socials)
+    s_json = data.get('socials')
+    interests_json = data.get('interests')
+    games_json = data.get('games')
+
+    if s_json and interests_json and games_json:
+        socials = Socials(id=str(uuid.uuid4()), user_id=user_id, facebook=s_json.get('facebook'), instagram=s_json.get('instagram'), 
+        twitter=s_json.get('twitter'), discord_id=s_json.get('discord_id'))
+
+        db.session.add(socials)
+
+        for i in json.loads(interests_json):
+            interest = Interest(id=str(uuid.uuid4()), user_id=user_id, interest=i)
+            db.session.add(interest)
+
+        for g in json.loads(games_json):
+            game = UserGame(id=g, user_id=user_id)
+            db.session.add(game)
+    else:
+        return make_response("Bad request", 400)
+
+    user = User(id=str(uuid.uuid4()), username=data.get('username'), email=data.get('email'), password=hashed_pass,
+     gender=data.get('gender'), pronouns=data.get('pronouns'), age=data.get('age'), orientation=data.get('orientation'),
+     about_me=data.get('about_me'))
     
     db.session.add(user)
     db.session.commit()
@@ -62,36 +82,33 @@ def get_user():
 def update_user():
     user_id = request.args.get('user_id')
     data = request.get_json()
-    profile_picture = request.files.get('profile_picture')
-    
-    socials = None
-
     s_json = data.get('socials')
 
-    if s_json:
-        socials = Socials(id=s_json.get('id'), user_id=s_json.get('user_id'), facebook=s_json.get('facebook'), instagram=s_json.get('instagram'), 
-        twitter=s_json.get('twitter'), discord_id=s_json.get('discord_id'))
-
-    if not user_id:
+    if not user_id or not s_json:
         return make_response("Bad request", 400)
-
+    
+    socials = Socials.query.filter_by(user_id=user_id).first()
     user = User.query.filter_by(id=user_id).first()
-    
-    if not user:
+
+    if not user and not socials:
         return make_response("Bad request", 400)
     
+    # update socials
+    socials.facebook = s_json.get('facebook')
+    socials.instagram = s_json.get('instagram')
+    socials.twitter = s_json.get('twitter')
+    socials.discord_id = s_json.get('discord_id')
+
+    # update user data
     user.username = data.get('username')
     user.email = data.get('email')
     if data.get('password'):
         user.password = generate_password_hash(data.get('password'), method='sha256')
     user.gender = data.get('gender')
     user.age = data.get('age')
-    if profile_picture:
-        user.profile_picture=profile_picture.read()
     user.orientation=data.get('orientation')
+    user.pronouns=data.get('pronouns')
     user.about_me=data.get('about_me')
-    if socials!=None:
-        user.socials=socials
 
     db.session.commit()
 
@@ -115,4 +132,103 @@ def delete_user():
 
     return make_response("User removed", 200)
 
-   
+@app.route('/interest', methods=['POST'])
+@token_required
+def add_interest():
+    user_id = request.args.get('user_id')
+    data = request.get_json()
+
+    if not user_id and not data:
+        return make_response("Bad request", 400)
+
+    interests_models = Interest.query.filter_by(user_id=user_id).all()
+
+    interests = []
+
+    if interests_models:
+        for i in interests_models:
+            interests.append(i.interest)
+
+    if data.get('interest') not in interests:
+        interest = Interest(id=str(uuid.uuid4()), user_id=user_id, interest=data.get('interest'))
+        db.session.add(interest)
+        db.session.commit()
+        return make_response('Interest added', 201)
+
+    return make_response('Intrest already exists', 409)
+
+@app.route('/interest', methods=['GET'])
+@token_required
+def remove_interest():
+    user_id = request.args.get('user_id')
+    data = request.get_json()
+
+    if not user_id and not data:
+        return make_response("Bad request", 400)
+
+    interests_models = Interest.query.filter_by(user_id=user_id).all()
+
+    interests = []
+
+    if interests_models:
+        for i in interests_models:
+            interests.append(i.interest)
+
+    if data.get('interest') in interests:
+        interest = Interest.query.filter_by(user_id=user_id, interest=data.get('interest')).first()
+        db.session.delete(interest)
+        db.session.commit()
+        return make_response('Interest removed', 200)
+
+    return make_response('Interest doesnt exist', 404)
+
+@app.route('/usergame', methods=['POST'])
+@token_required
+def add_usergame():
+    user_id = request.args.get('user_id')
+    data = request.get_json()
+
+    if not user_id and not data:
+        return make_response("Bad request", 400)
+
+    user_games_models = UserGame.query.filter_by(user_id=user_id).all()
+
+    games = []
+
+    if user_games_models:
+        for g in user_games_models:
+            games.append(g.game)
+
+    if data.get('game') not in games:
+        user_game = UserGame(id=str(uuid.uuid4()), user_id=user_id, game=data.get('game'))
+        db.session.add(user_game)
+        db.session.commit()
+        return make_response('Game added', 201)
+
+    return make_response('Game is already added', 409)
+
+@app.route('/usergame', methods=['GET'])
+@token_required
+def remove_usergame():
+    user_id = request.args.get('user_id')
+
+    data = request.get_json()
+
+    if not user_id and not data:
+        return make_response("Bad request", 400)
+
+    user_games_models = UserGame.query.filter_by(user_id=user_id).all()
+
+    games = []
+
+    if user_games_models:
+        for g in user_games_models:
+            games.append(g.game)
+    
+    if data.get('game') in games:
+        user_game = UserGame.query.filter_by(user_id=user_id, game=data.game('game')).first()
+        db.session.delete(user_game)
+        db.session.commit()
+        return make_response('Game removed', 200)
+
+    return make_response('Game is not on the list', 404)
