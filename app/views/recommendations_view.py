@@ -3,6 +3,7 @@ from app import app, db
 from app.views.authorization import token_required
 from flask import json, jsonify, request
 from flask.helpers import make_response
+from sqlalchemy.sql.expression import func
 from app.model import User, AddedUser, Teammate, IgnoredUser
 
 @app.route('/recommendations/follow/', methods=['POST'])
@@ -80,6 +81,49 @@ def add_to_ignored():
             db.session.commit()
 
     return make_response('Users ignored', 200)
+
+@app.route('/recommendations/gaming', methods=['GET'])
+@token_required
+def get_recommendations_based_off_games():
+    user_id = request.args.get('user_id')
+
+    user = User.query.filter_by(id=user_id).first()
+
+    boundary = 0
+    recommended_users = {}
+
+    other_users = User.query_order_by(func.random()).limit(150).all()
+
+    for u in other_users:
+        common_games = set(user.games) & set(u.games) 
+        if len(recommended_users) > 20:
+            if boundary < len(common_games):
+                # remove user with lowest value
+                recommended_users = dict(sorted(recommended_users.items(), key=lambda item: item[1], reverse=True))
+                keys = list(recommended_users)
+                del recommended_users[keys[19]]
+
+                recommended_users[u] = len(common_games)
+                recommended_users = dict(sorted(recommended_users.items(), key=lambda item: item[1], reverse=True))
+                keys = list(recommended_users)
+                boundary = recommended_users.get(keys[19])
+        else:
+            recommended_users[u] = len(common_games)
+            recommended_users = dict(sorted(recommended_users.items(), key=lambda item: item[1], reverse=True))
+            keys = list(recommended_users)
+            boundary = recommended_users.get(keys[19])
+
+    recommended_users_id = []
+
+    for i in list(recommended_users):
+        recommended_users_id.append(i.id)
+
+    return make_response(jsonify(recommended_users_id), 200)
+
+
+
+
+
 
 
 
