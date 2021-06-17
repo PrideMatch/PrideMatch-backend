@@ -156,3 +156,28 @@ def add_interest():
         return make_response('Interest added', 201)
 
     return make_response('Intrest already exists', 409)
+
+@app.route('/interest', methods=['GET'])
+@token_required
+def remove_interest():
+    user_id = request.args.get('user_id')
+    data = request.get_json()
+
+    if not user_id and not data:
+        return make_response("Bad request", 400)
+
+    interests_models = Interest.query.filter_by(user_id=user_id).all()
+
+    interests = []
+
+    if interests_models:
+        for i in interests_models:
+            interests.append(i.interest)
+
+    if data.get('interest') in interests:
+        interest = Interest.query.filter_by(user_id=user_id, interest=data.get('interest')).first()
+        db.session.delete(interest)
+        db.session.commit()
+        return make_response('Interest removed', 200)
+
+    return make_response('Interest doesnt exist', 404)
