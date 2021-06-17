@@ -110,8 +110,50 @@ def get_recommendations_based_off_games():
         else:
             recommended_users[u] = len(common_games)
             recommended_users = dict(sorted(recommended_users.items(), key=lambda item: item[1], reverse=True))
-            keys = list(recommended_users)
-            boundary = recommended_users.get(keys[19])
+            
+            if(len(recommended_users) >= 20):
+                keys = list(recommended_users)
+                boundary = recommended_users.get(keys[19])
+
+    recommended_users_id = []
+
+    for i in list(recommended_users):
+        recommended_users_id.append(i.id)
+
+    return make_response(jsonify(recommended_users_id), 200)
+
+@app.route('/recommendations/interests', methods=['GET'])
+@token_required
+def get_recommendations_based_off_interests():
+    user_id = request.args.get('user_id')
+
+    user = User.query.filter_by(id=user_id).first()
+
+    boundary = 0
+    recommended_users = {}
+
+    other_users = User.query_order_by(func.random()).limit(150).all()
+
+    for u in other_users:
+        common_interests = set(user.interests) & set(u.interests)
+        if len(recommended_users) > 20:
+            if boundary < len(common_interests):
+                # remove user with lowest value
+                recommended_users = dict(sorted(recommended_users.items(), key=lambda item: item[1], reverse=True))
+                keys = list(recommended_users)
+                del recommended_users[keys[19]]
+
+                recommended_users[u] = len(common_interests)
+                recommended_users = dict(sorted(recommended_users.items(), key=lambda item: item[1], reverse=True))
+                keys = list(recommended_users)
+                boundary = recommended_users.get(keys[19])
+        else:
+            recommended_users[u] = len(common_interests)
+            recommended_users = dict(sorted(recommended_users.items(), key=lambda item: item[1], reverse=True))
+            
+            if(len(recommended_users) >= 20):
+                keys = list(recommended_users)
+                boundary = recommended_users.get(keys[19])
 
     recommended_users_id = []
 
