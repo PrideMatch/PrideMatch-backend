@@ -10,7 +10,7 @@ from app.model import User
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = request.headers.get('Authentication')
+        token = request.headers.get('Authorization')
 
         if not token:
             return jsonify({'message' : 'Token is missing'}), 403
@@ -24,8 +24,8 @@ def token_required(f):
         except:
             pass
 
-        try: 
-            data=jwt.decode(token, server_secrets.SECRET_KEY)
+        try:
+            data=jwt.decode(token, server_secrets.SECRET_KEY,algorithms=["HS256"])
             user = User.query.filter_by(id=data['id']).first()
             jwt_token = True
         except:
