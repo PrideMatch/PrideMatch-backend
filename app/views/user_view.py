@@ -181,3 +181,28 @@ def remove_interest():
         return make_response('Interest removed', 200)
 
     return make_response('Interest doesnt exist', 404)
+
+@app.route('/usergame', methods=['POST'])
+@token_required
+def add_usergame():
+    user_id = request.args.get('user_id')
+    data = request.get_json()
+
+    if not user_id and not data:
+        return make_response("Bad request", 400)
+
+    user_games_models = UserGame.query.filter_by(user_id=user_id).all()
+
+    games = []
+
+    if user_games_models:
+        for g in user_games_models:
+            games.append(g.id)
+
+    if data.get('game') not in games:
+        user_game = UserGame(id=data.get('game'), user_id=user_id)
+        db.session.add(user_game)
+        db.session.commit()
+        return make_response('Game added', 201)
+
+    return make_response('Game is already added', 409)
