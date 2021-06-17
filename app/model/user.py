@@ -3,7 +3,7 @@ from app import db
 
 class User(db.Model):
     def __init__(self, id, username, email, socials, password = '', gender = '', age = None, 
-    profile_picture = None, orientation = '', about_me = '', interests = [], games = [], teammates = [], 
+    profile_picture = None, orientation = '', about_me = '', pronouns='', interests = [], games = [], teammates = [], 
     added_users = [], ignored_users = []):
         self.id = id
         self.username = username
@@ -14,6 +14,7 @@ class User(db.Model):
         self.profile_picture = profile_picture
         self.orientation = orientation
         self.about_me = about_me
+        self.pronouns = pronouns
         self.interests = interests
         self.socials = socials
         self.games = games
@@ -31,6 +32,7 @@ class User(db.Model):
     profile_picture = db.Column(db.LargeBinary(), nullable=True)
     orientation = db.Column(db.String(20), nullable=True)
     about_me = db.Column(db.String(255), nullable=True)
+    pronouns = db.Column(db.String(20), nullable=True)
     socials = db.relationship('Socials', uselist=False, backref='user', lazy=True)
     interests = db.relationship('Interest', backref='user', lazy=True)
     games = db.relationship('UserGame', backref='user', lazy=True)
