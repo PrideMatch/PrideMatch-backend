@@ -1,9 +1,9 @@
 import uuid
 from app import app, db
 from app.views.authorization import token_required
-from flask import jsonify, request
+from flask import json, jsonify, request
 from flask.helpers import make_response
-from app.model import User, AddedUser, Teammate
+from app.model import User, AddedUser, Teammate, IgnoredUser
 
 @app.route('/recommendations/follow/', methods=['POST'])
 @token_required
@@ -48,5 +48,30 @@ def follow():
     response = make_response('Users are now teammates', 200)
     response.headers['X-Teammates']='false'
     return response
+
+@app.route('/recommendations/ignored', methods=['POST'])
+@token_required
+def add_to_ignored():
+    user_id = request.args.get('user_id')
+    data = request.get_json()
+
+    if not user_id or not data:
+        return make_response('Bad request', 400)
+
+    users_json_object = json.loads(data)
+    users_list = users_json_object['users']
+
+    if not users_list:
+        return make_response('Bad request', 400)
+
+    for x in users_list:
+        ignored_user = IgnoredUser(id=str(uuid.uuid4()), user_id=user_id, ignored_user_id=x)
+        db.session.add(ignored_user)
+
+    db.session.commit()
+
+    return make_response('Users ignored', 200)
+
+
     
 
