@@ -197,10 +197,10 @@ def add_usergame():
 
     if user_games_models:
         for g in user_games_models:
-            games.append(g.id)
+            games.append(g.game)
 
     if data.get('game') not in games:
-        user_game = UserGame(id=data.get('game'), user_id=user_id)
+        user_game = UserGame(id=str(uuid.uuid4()), user_id=user_id, game=data.get('game'))
         db.session.add(user_game)
         db.session.commit()
         return make_response('Game added', 201)
@@ -223,10 +223,10 @@ def remove_usergame():
 
     if user_games_models:
         for g in user_games_models:
-            games.append(g.id)
+            games.append(g.game)
     
     if data.get('game') in games:
-        user_game = UserGame.query.filter_by(id=data.get('game'), user_id=user_id).first()
+        user_game = UserGame.query.filter_by(user_id=user_id, game=data.game('game')).first()
         db.session.delete(user_game)
         db.session.commit()
         return make_response('Game removed', 200)

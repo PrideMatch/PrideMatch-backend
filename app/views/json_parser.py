@@ -1,7 +1,7 @@
 from flask import json
 
 def usergame_to_json(user_game):
-    return json.dumps({user_game.id})
+    return json.dumps({user_game.game})
 
 def interest_to_json(interest):
     return json.dumps({interest.interest})
