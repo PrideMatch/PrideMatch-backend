@@ -1,8 +1,9 @@
+from sqlalchemy.orm import backref
 from app import db
 
 class User(db.Model):
     def __init__(self, id, username, email, socials, password = '', gender = '', age = None, 
-    profile_picture = None, orientation = '', about_me = '', games = [], teammates = [], added_users = []):
+    profile_picture = None, orientation = '', about_me = '', interests = [], games = [], teammates = [], added_users = []):
         self.id = id
         self.username = username
         self.password = password
@@ -12,6 +13,7 @@ class User(db.Model):
         self.profile_picture = profile_picture
         self.orientation = orientation
         self.about_me = about_me
+        self.interests = interests
         self.socials = socials
         self.games = games
         self.teammates = teammates
@@ -28,6 +30,7 @@ class User(db.Model):
     orientation = db.Column(db.String(20), nullable=True)
     about_me = db.Column(db.String(255), nullable=True)
     socials = db.relationship('Socials', uselist=False, backref='user', lazy=True)
+    interests = db.relationship('Interest', backref='user', lazy=True)
     games = db.relationship('UserGame', backref='user', lazy=True)
     teammates = db.relationship('Teammate', lazy=True)
     added_users = db.relationship('AddedUser', lazy='noload')
