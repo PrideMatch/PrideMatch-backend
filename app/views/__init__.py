@@ -1,1 +1,2 @@
-from app.views.user_view import login, register
+from app.views.user_view import login, register, get_user, update_user, delete_user
+from app.views.recommendations_view import follow, add_to_ignored, get_recommendations_based_off_games, get_recommendations_based_off_interests
