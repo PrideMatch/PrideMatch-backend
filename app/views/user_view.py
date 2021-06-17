@@ -3,7 +3,7 @@ import uuid
 import jwt
 import server_secrets
 from app import app, db
-from app.model import Socials, User, Interest, UserGame
+from app.model import Socials, User, Interest, UserGame, interest
 from flask import json, jsonify, request
 from flask.helpers import make_response
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -83,11 +83,11 @@ def update_user():
     user_id = request.args.get('user_id')
     data = request.get_json()
     s_json = data.get('socials')
-    
+
     if not user_id or not s_json:
         return make_response("Bad request", 400)
     
-    socials = Socials.query.filter_by(user_id=user_id)
+    socials = Socials.query.filter_by(user_id=user_id).first()
     user = User.query.filter_by(id=user_id).first()
 
     if not user and not socials:
@@ -132,4 +132,27 @@ def delete_user():
 
     return make_response("User removed", 200)
 
-   
+@app.route('/interest', methods=['POST'])
+@token_required
+def add_interest():
+    user_id = request.args.get('user_id')
+    data = request.get_json()
+
+    if not user_id and not data:
+        return make_response("Bad request", 400)
+
+    interests_models = Interest.query.filter_by(user_id=user_id).all()
+
+    interests = []
+
+    if interests_models:
+        for i in interests_models:
+            interests.append(i.interest)
+
+    if data.get('interest') not in interests:
+        interest = Interest(id=str(uuid.uuid4()), user_id=user_id, interest=data.get('interest'))
+        db.session.add(interest)
+        db.session.commit()
+        return make_response('Interest added', 201)
+
+    return make_response('Intrest already exists', 409)
