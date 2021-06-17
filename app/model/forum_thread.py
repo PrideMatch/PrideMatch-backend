@@ -6,4 +6,5 @@ class ForumThread(db.Model):
     title = db.Column(db.String(40), nullable=False)
     creation_time = db.Column(db.DateTime(), nullable=False)
     text = db.Column(db.Text, nullable=False)
+    forum_section = db.Column(db.String(40), nullable=True)
     comments = db.relationship('ForumComment', backref='forumthread', lazy=True)
