@@ -32,6 +32,21 @@ def login():
 
     return make_response('Invalid username or password', 401)
 
+@app.route('/user_exists', methods=['GET'])
+def user_exists():
+    email = request.args.get('email')
+
+    if not email:
+        return make_response('Bad request', 400)
+
+    user = User.query.filter_by(email=email).first()
+
+    if user:
+        return jsonify({'exists': True}), 200
+    else:
+        return jsonify({'exists': False}), 200
+
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
