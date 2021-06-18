@@ -4,7 +4,7 @@ import jwt
 import server_secrets
 import os
 from app import app, db
-from app.model import Socials, User, Interest, UserGame, interest
+from app.model import Socials, User, Interest, UserGame, IgnoredUser, AddedUser
 from flask import json, jsonify, request, send_file
 from flask.helpers import make_response
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -22,13 +22,16 @@ def login():
         return make_response('Invalid request', 400)
     
     user = User.query.filter_by(username=username).first()
-
+    
+    if not user:
+        user = User.query.filter_by(email=username).first
+    
     if not user:
         return make_response('Invalid username or password', 400)
 
     if  check_password_hash(user.password, password):
         token = jwt.encode({'id': user.id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(days=1)}, server_secrets.SECRET_KEY)
-        return jsonify({'token' : token})
+        return jsonify({'id': user.id, 'token' : token})
 
     return make_response('Invalid username or password', 401)
 
@@ -53,9 +56,29 @@ def register():
 
     user_id = str(uuid.uuid4())
 
+    if not data:
+        return make_response('Bad request', 400)
+
+    duplicates = User.query.filter_by(username=data.get('username')).all()
+
+    if len(duplicates)>0:
+        return make_response('User with specified username already exists', 409)
+    
+    duplicates = User.query.filter_by(username=data.get('email')).all()
+
+    if len(duplicates)>0:
+        return make_response('User with specified email already exists', 409)
+
     hashed_pass = ''
     if data.get('password'):
         hashed_pass = generate_password_hash(data.get('password'), method='sha256')
+
+    user = User(id=user_id, username=data.get('username'), email=data.get('email'), password=hashed_pass,
+     gender=data.get('gender'), pronouns=data.get('pronouns'), age=data.get('age'), orientation=data.get('orientation'),
+     about_me=data.get('about_me'), display_pronouns=data.get('display_pronouns'), display_gender=data.get('display_gender'), 
+     display_orientation=data.get('display_orientation'))
+
+    db.session.add(user)
 
     s_json = data.get('socials')
     interests_json = data.get('interests')
@@ -77,11 +100,6 @@ def register():
     else:
         return make_response("Bad request", 400)
 
-    user = User(id=str(uuid.uuid4()), username=data.get('username'), email=data.get('email'), password=hashed_pass,
-     gender=data.get('gender'), pronouns=data.get('pronouns'), age=data.get('age'), orientation=data.get('orientation'),
-     about_me=data.get('about_me'), display_pronouns=data.get('display_pronouns'), display_gender=data.get('display_gender'), display_orientation=data.get('display_orientation'))
-    
-    db.session.add(user)
     db.session.commit()
 
     return make_response('User created', 201)
@@ -94,7 +112,12 @@ def get_user():
 
     user = User.query.filter_by(id=user_id).first()
     
-    if token['id'] != user_id:
+    data=jwt.decode(token, server_secrets.SECRET_KEY,algorithms=["HS256"])
+    
+    if not data:
+        return make_response('Unauthorized', 401)
+
+    if data['id'] != user_id:
         user.teammates = []
         user.new_follows = []
 
@@ -155,6 +178,30 @@ def delete_user():
 
     if not user:
         return make_response("Bad request", 400)
+
+    if user.socials:
+        db.session.delete(user.socials)
+
+    for i in user.interests:
+        db.session.delete(i)
+    
+    for g in user.games:
+        db.session.delete(g)
+    
+    for f in user.new_follows:
+        db.session.delete(f)
+
+    for t in user.teammates:
+        db.session.delete(t)
+
+    added_users = AddedUser.query.filter_by(user_id=user_id).all()
+    ignored_users = IgnoredUser.query.filter_by(user_id=user_id).all()
+
+    for u in added_users:
+        db.session.delete(u)
+    
+    for u in ignored_users:
+        db.session.delete(u)
 
     db.session.delete(user)
     db.session.commit()
