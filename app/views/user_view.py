@@ -28,7 +28,7 @@ def login():
 
     if  check_password_hash(user.password, password):
         token = jwt.encode({'id': user.id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(days=1)}, server_secrets.SECRET_KEY)
-        return jsonify({'token' : token})
+        return jsonify({'id': user.id, 'token' : token})
 
     return make_response('Invalid username or password', 401)
 
