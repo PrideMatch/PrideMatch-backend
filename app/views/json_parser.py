@@ -80,4 +80,4 @@ def forumthread_to_json(thread):
     'text': thread.text, 'forum_section': thread.forum_section, 'comments': json.loads(comments_json)})
 
 def unreadfollow_to_json(follow):
-    return json.dumps({'id': follow.id, 'followed_by': follow.followed_by, 'teammates': follow.teammates})
+    return json.dumps({'id': follow.id, 'user_id': follow.user_id, 'followed_by': follow.followed_by, 'teammates': follow.teammates})
