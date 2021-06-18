@@ -102,7 +102,7 @@ def get_recommendations_based_off_games():
     boundary = 0
     recommended_users = {}
 
-    other_users = User.query_order_by(func.random()).limit(150).all()
+    other_users = User.query.order_by(func.random()).limit(150).all()
 
     for u in other_users:
         common_games = set(user.games) & set(u.games) 
@@ -143,7 +143,7 @@ def get_recommendations_based_off_interests():
     boundary = 0
     recommended_users = {}
 
-    other_users = User.query_order_by(func.random()).limit(150).all()
+    other_users = User.query.order_by(func.random()).limit(150).all()
 
     for u in other_users:
         common_interests = set(user.interests) & set(u.interests)

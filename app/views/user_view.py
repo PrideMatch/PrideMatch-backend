@@ -1,10 +1,10 @@
 import datetime
-from os import dup
 import uuid
 import jwt
 import server_secrets
+import os
 from app import app, db
-from app.model import Socials, User, Interest, UserGame, AddedUser, IgnoredUser
+from app.model import Socials, User, Interest, UserGame, IgnoredUser, AddedUser
 from flask import json, jsonify, request, send_file
 from flask.helpers import make_response
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -22,10 +22,10 @@ def login():
         return make_response('Invalid request', 400)
     
     user = User.query.filter_by(username=username).first()
-
+    
     if not user:
-        user = User.query.filter_by(email=username).first()
-
+        user = User.query.filter_by(email=username).first
+    
     if not user:
         return make_response('Invalid username or password', 400)
 
@@ -34,6 +34,21 @@ def login():
         return jsonify({'id': user.id, 'token' : token})
 
     return make_response('Invalid username or password', 401)
+
+@app.route('/user_exists', methods=['GET'])
+def user_exists():
+    email = request.args.get('email')
+
+    if not email:
+        return make_response('Bad request', 400)
+
+    user = User.query.filter_by(email=email).first()
+
+    if user:
+        return jsonify({'exists': True}), 200
+    else:
+        return jsonify({'exists': False}), 200
+
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -83,7 +98,7 @@ def register():
             game = UserGame(id=str(uuid.uuid4()), user_id=user_id, game=g)
             db.session.add(game)
     else:
-        return make_response("Bad request l", 400)
+        return make_response("Bad request", 400)
 
     db.session.commit()
 
@@ -94,15 +109,19 @@ def register():
 def get_user():
     user_id = request.args.get('user_id')
     token = request.headers.get('Authorization')
-    token_data = jwt.decode(token, server_secrets.SECRET_KEY,algorithms=["HS256"])
 
     user = User.query.filter_by(id=user_id).first()
     
-    if token_data['id'] != user_id:
+    data=jwt.decode(token, server_secrets.SECRET_KEY,algorithms=["HS256"])
+    
+    if not data:
+        return make_response('Unauthorized', 401)
+
+    if data['id'] != user_id:
         user.teammates = []
         user.new_follows = []
 
-    return user_to_json(user), 200
+    return make_response(user_to_json(user), 200)
 
 @app.route('/user', methods=['PUT'])
 @token_required
@@ -322,8 +341,15 @@ def add_profile_picture():
         return make_response("Bad request", 400)
 
     user = User.query.get_or_404(user_id)
-    user.profile_picture = file
+
+    image = Image.open(BytesIO(file))
+    image = image.resize((300,300),Image.ANTIALIAS)
+    image.save('image.jpg',quality=50,optimize=True)
+    im = open("image.jpg", "rb") 
+    user.profile_picture = im.read()
     db.session.commit()
+    im.close()
+    os.remove("image.jpg")
 
     return make_response('Profile picture added', 201)
 
