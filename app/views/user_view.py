@@ -24,6 +24,9 @@ def login():
     user = User.query.filter_by(username=username).first()
 
     if not user:
+        user = User.query.filter_by(email=username).first()
+
+    if not user:
         return make_response('Invalid username or password', 400)
 
     if  check_password_hash(user.password, password):
