@@ -19,7 +19,7 @@ def get_threads_from_section():
 
     return make_response(jsonify(forum_threads), 200)
 
-@app.route('forum/threads', methods=['POST'])
+@app.route('/forum/threads', methods=['POST'])
 @token_required
 def add_thread_to_section():
     section_name = request.args.get('forum_section')
@@ -36,7 +36,7 @@ def add_thread_to_section():
 
     return make_response('Forum thread created', 201)
 
-@app.route('forum/comments', methods=['GET'])
+@app.route('/forum/comments', methods=['GET'])
 @token_required
 def get_comments_from_thread():
     thread_id = request.args.get('thread_id')
@@ -49,6 +49,22 @@ def get_comments_from_thread():
 
     return make_response(jsonify(comments), 200)
 
+@app.route('/forum/comments', method=['POST'])
+@token_required
+def add_comment_on_thread():
+    thread_id=request.args.get('thread_id')
+    data = request.get_json()
+
+    if not thread_id or not data:
+        return make_response('Bad Request', 400)
+
+    comment = ForumComment(id=str(uuid.uuid4()), text=data.get('text'), creation_time=data.get('creation_time'), author=data.get('author'), 
+    thread=data.get('thread'), reply_to=data.get('reply_to'))
+
+    db.session.add(comment)
+    db.session.commit()
+
+    return make_response('Comment added', 201)
 
 def compare_items_by_date(item1, item2):
     if item1.creation_time < item2.creation_time:
@@ -58,3 +74,4 @@ def compare_items_by_date(item1, item2):
     else:
         return 0
 
+# remove comment
