@@ -302,13 +302,27 @@ Authorization : <ACCESS_TOKEN>
 
 BODY (FILE):
 
-profile_picture.jpg or profile_picture.png
+File name: profile_pic
 
 RESPONSE:
 
 ```jsx
 "PROFILE PICTURE ADDED" 201 CREATED
 ```
+
+### Get profile picture
+
+REQUEST:
+
+```jsx
+GET url/user/profile_pic?user_id=<user_id>
+```
+
+BODY:
+   EMPTY
+   
+RESPONSE:
+ File: profile_pic
 
 ### Update profile picture
 
@@ -324,7 +338,7 @@ Authorization : <ACCESS_TOKEN>
 
 BODY (FILE):
 
-profile_picture.jpg or profile_picture.png
+File name: profile_pic
 
 RESPONSE:
 
