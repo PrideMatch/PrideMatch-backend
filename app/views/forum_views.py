@@ -66,6 +66,20 @@ def add_comment_on_thread():
 
     return make_response('Comment added', 201)
 
+@app.route('/forum/comments', method=['DELETE'])
+@token_required
+def remove_comment():
+    comment_id=request.args.get('comment_id')
+
+    if not comment_id:
+        return make_response('Bad Request', 400)
+
+    comment = ForumComment.query.filter_by(id=comment_id).first()
+    db.session.delete(comment)
+    db.session.commit()
+
+    return make_response('Comment removed', 200)
+
 def compare_items_by_date(item1, item2):
     if item1.creation_time < item2.creation_time:
         return -1
@@ -73,5 +87,3 @@ def compare_items_by_date(item1, item2):
         return 1
     else:
         return 0
-
-# remove comment
