@@ -8,7 +8,7 @@ from flask import json, jsonify, request, send_file
 from flask.helpers import make_response
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.views.json_parser import user_to_json
-from app.views.authorization import token_required
+from app.views.authorization import token_required, verify_user_id
 from io import BytesIO
 
 @app.route('/login', methods=['GET'])
@@ -73,16 +73,22 @@ def register():
 @token_required
 def get_user():
     user_id = request.args.get('user_id')
+    token = request.headers.get('Authorization')
 
     user = User.query.filter_by(id=user_id).first()
     
+    if token['id'] != user_id:
+        user.teammates = []
+
     return make_response(user_to_json(user), 200)
 
 @app.route('/user', methods=['PUT'])
 @token_required
+@verify_user_id
 def update_user():
     user_id = request.args.get('user_id')
     data = request.get_json()
+
     s_json = data.get('socials')
 
     if not user_id or not s_json:
@@ -120,6 +126,7 @@ def update_user():
 
 @app.route('/user', methods=['DELETE'])
 @token_required
+@verify_user_id
 def delete_user():
     user_id = request.args.get('user_id') 
 
@@ -138,6 +145,7 @@ def delete_user():
 
 @app.route('/interest', methods=['POST'])
 @token_required
+@verify_user_id
 def add_interest():
     user_id = request.args.get('user_id')
     data = request.get_json()
@@ -163,6 +171,7 @@ def add_interest():
 
 @app.route('/interest', methods=['DELETE'])
 @token_required
+@verify_user_id
 def remove_interest():
     user_id = request.args.get('user_id')
     data = request.get_json()
@@ -188,6 +197,7 @@ def remove_interest():
 
 @app.route('/usergame', methods=['POST'])
 @token_required
+@verify_user_id
 def add_usergame():
     user_id = request.args.get('user_id')
     data = request.get_json()
@@ -213,6 +223,7 @@ def add_usergame():
 
 @app.route('/usergame', methods=['DELETE'])
 @token_required
+@verify_user_id
 def remove_usergame():
     user_id = request.args.get('user_id')
 
@@ -239,6 +250,7 @@ def remove_usergame():
 
 @app.route('/user/profile_pic', methods=['GET'])
 @token_required
+@verify_user_id
 def get_profile_picture():
     user_id = request.args.get('user_id')
 
@@ -255,6 +267,7 @@ def get_profile_picture():
 
 @app.route('/user/profile_pic', methods=['POST'])
 @token_required
+@verify_user_id
 def add_profile_picture():
     user_id = request.args.get('user_id')
     file = request.files['profile_pic']
@@ -272,6 +285,7 @@ def add_profile_picture():
 
 @app.route('/user/profile_pic', methods=['DELETE'])
 @token_required
+@verify_user_id
 def remove_profile_picture():
     user_id = request.args.get('user_id')
 
@@ -287,6 +301,7 @@ def remove_profile_picture():
 
 @app.route('/user/profile_pic', methods=['PUT'])
 @token_required
+@verify_user_id
 def update_profile_picture():
     user_id = request.args.get('user_id')
 
