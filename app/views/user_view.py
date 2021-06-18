@@ -87,6 +87,11 @@ def get_user():
 def update_user():
     user_id = request.args.get('user_id')
     data = request.get_json()
+    token = request.headers.get('Authorization')
+
+    if token['id'] != user_id:
+        return make_response('Unauthorized', 401)
+
     s_json = data.get('socials')
 
     if not user_id or not s_json:
@@ -130,6 +135,11 @@ def delete_user():
     if not user_id:
         return make_response("Bad request", 400)
     
+    token = request.headers.get('Authorization')
+
+    if token['id'] != user_id:
+        return make_response('Unauthorized', 401)
+    
     user = User.query.filter_by(id=user_id).first()
 
     if not user:
@@ -148,6 +158,11 @@ def add_interest():
 
     if not user_id and not data:
         return make_response("Bad request", 400)
+
+    token = request.headers.get('Authorization')
+
+    if token['id'] != user_id:
+        return make_response('Unauthorized', 401)
 
     interests_models = Interest.query.filter_by(user_id=user_id).all()
 
@@ -174,6 +189,11 @@ def remove_interest():
     if not user_id and not data:
         return make_response("Bad request", 400)
 
+    token = request.headers.get('Authorization')
+
+    if token['id'] != user_id:
+        return make_response('Unauthorized', 401)
+
     interests_models = Interest.query.filter_by(user_id=user_id).all()
 
     interests = []
@@ -198,6 +218,11 @@ def add_usergame():
 
     if not user_id and not data:
         return make_response("Bad request", 400)
+
+    token = request.headers.get('Authorization')
+
+    if token['id'] != user_id:
+        return make_response('Unauthorized', 401)
 
     user_games_models = UserGame.query.filter_by(user_id=user_id).all()
 
@@ -225,6 +250,11 @@ def remove_usergame():
     if not user_id and not data:
         return make_response("Bad request", 400)
 
+    token = request.headers.get('Authorization')
+
+    if token['id'] != user_id:
+        return make_response('Unauthorized', 401)
+
     user_games_models = UserGame.query.filter_by(user_id=user_id).all()
 
     games = []
@@ -248,6 +278,11 @@ def get_profile_picture():
 
     if not user_id:
         return make_response("Bad request", 400)
+
+    token = request.headers.get('Authorization')
+
+    if token['id'] != user_id:
+        return make_response('Unauthorized', 401)
     
     user = User.query.get_or_404(user_id)
     picture = BytesIO(user.profile_picture)
@@ -266,6 +301,11 @@ def add_profile_picture():
     if not user_id or not file:
         return make_response("Bad request", 400)
 
+    token = request.headers.get('Authorization')
+
+    if token['id'] != user_id:
+        return make_response('Unauthorized', 401)
+
     user = User.query.get_or_404(user_id)
 
     data = file.read()
@@ -282,6 +322,11 @@ def remove_profile_picture():
     if not user_id:
         return make_response("Bad request", 400)
 
+    token = request.headers.get('Authorization')
+
+    if token['id'] != user_id:
+        return make_response('Unauthorized', 401)
+
     user = User.query.get_or_404(user_id)
 
     user.profile_picture=None
@@ -296,6 +341,11 @@ def update_profile_picture():
 
     if not user_id:
         return make_response("Bad request", 400)
+
+    token = request.headers.get('Authorization')
+
+    if token['id'] != user_id:
+        return make_response('Unauthorized', 401)
 
     user = User.query.get_or_404(user_id)
 
