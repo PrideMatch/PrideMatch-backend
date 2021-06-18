@@ -36,6 +36,20 @@ def add_thread_to_section():
 
     return make_response('Forum thread created', 201)
 
+@app.route('/forum/threads', methods=['DELETE'])
+@token_required
+def remove_thread():
+    thread_id = request.args.get('thread_id')
+
+    if not thread_id:
+        return make_response("Bad request", 400)
+
+    thread = ForumThread.query.filter_by(id=thread_id).first()
+    db.session.delete(thread)
+    db.session.commit()
+
+    return make_response('Forum thread removed', 200)
+
 @app.route('/forum/comments', methods=['GET'])
 @token_required
 def get_comments_from_thread():
