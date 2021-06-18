@@ -4,11 +4,12 @@ import jwt
 import server_secrets
 from app import app, db
 from app.model import Socials, User, Interest, UserGame, interest
-from flask import json, jsonify, request
+from flask import json, jsonify, request, send_file
 from flask.helpers import make_response
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.views.json_parser import user_to_json
 from app.views.authorization import token_required
+from io import BytesIO
 
 @app.route('/login', methods=['GET'])
 def login():
@@ -157,7 +158,7 @@ def add_interest():
 
     return make_response('Intrest already exists', 409)
 
-@app.route('/interest', methods=['GET'])
+@app.route('/interest', methods=['DELETE'])
 @token_required
 def remove_interest():
     user_id = request.args.get('user_id')
@@ -207,7 +208,7 @@ def add_usergame():
 
     return make_response('Game is already added', 409)
 
-@app.route('/usergame', methods=['GET'])
+@app.route('/usergame', methods=['DELETE'])
 @token_required
 def remove_usergame():
     user_id = request.args.get('user_id')
@@ -232,3 +233,66 @@ def remove_usergame():
         return make_response('Game removed', 200)
 
     return make_response('Game is not on the list', 404)
+
+@app.route('/user/profile_pic', methods=['GET'])
+@token_required
+def get_profile_picture():
+    user_id = request.args.get('user_id')
+
+    if not user_id:
+        return make_response("Bad request", 400)
+    
+    user = User.query.get_or_404(user_id)
+    picture = BytesIO(user.profile_picture)
+
+    if not picture:
+        return make_response("Picture not found", 404)
+    
+    return send_file(picture, attachment_filename='profile_pic', as_attachment=True)
+
+@app.route('/user/profile_pic', methods=['POST'])
+@token_required
+def add_profile_picture():
+    user_id = request.args.get('user_id')
+    file = request.files['profile_pic']
+
+    if not user_id or not file:
+        return make_response("Bad request", 400)
+
+    user = User.query.get_or_404(user_id)
+
+    data = file.read()
+    user.profile_picture = data
+    db.session.commit()
+
+    return make_response('Profile picture added', 201)
+
+@app.route('/user/profile_pic', methods=['DELETE'])
+@token_required
+def remove_profile_picture():
+    user_id = request.args.get('user_id')
+
+    if not user_id:
+        return make_response("Bad request", 400)
+
+    user = User.query.get_or_404(user_id)
+
+    user.profile_picture=None
+    db.session.commit()
+
+    return make_response('Profile picture removed', 200)
+
+@app.route('/user/profile_pic', methods=['PUT'])
+@token_required
+def update_profile_picture():
+    user_id = request.args.get('user_id')
+
+    if not user_id:
+        return make_response("Bad request", 400)
+
+    user = User.query.get_or_404(user_id)
+
+    user.profile_picture=None
+    db.session.commit()
+
+    return make_response('Profile picture updated', 200)
