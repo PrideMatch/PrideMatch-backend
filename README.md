@@ -56,9 +56,9 @@ BODY:
     "orientation": "heterosexual",
     "pronouns": "she/her",
     "about_me": "Lorem ipsum or whatever",
-    "display_orientation": True,
-    "display_gender": True,
-    "display_pronouns": True,
+    "display_orientation": true,
+    "display_gender": true,
+    "display_pronouns": true,
     "socials": 
     {
         "facebook": "linktofacebook",
@@ -116,13 +116,13 @@ RESPONSE:
     	{
 		"id": "d69-4170-45d2-ad81-3e36794f",
 		"followed_by":"d69-4170-45d2-ad81-3e36794f",
-		"teammates": True
+		"teammates": true
 	},
 	
 	{
 		"id": "d69-4170-45d2-ad81-3e36794f"
 		"followed_by":"d69-4170-45d2-ad81-3e36794f",
-		"teammates": True
+		"teammates": true
 	}		
     ]
 			
@@ -156,9 +156,9 @@ BODY (json):
     "orientation": "heterosexual",
     "pronouns": "she/her",
     "about_me": "Lorem ipsum or whatever",
-    "display_orientation": True,
-    "display_gender": True,
-    "display_pronouns": True,
+    "display_orientation": true,
+    "display_gender": true,
+    "display_pronouns": true,
     "socials": 
     {
         "facebook": "linktofacebook",
