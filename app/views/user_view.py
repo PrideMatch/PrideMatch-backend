@@ -64,7 +64,7 @@ def register():
     if len(duplicates)>0:
         return make_response('User with specified username already exists', 409)
     
-    duplicates = User.query.filter_by(username=data.get('email')).all()
+    duplicates = User.query.filter_by(email=data.get('email')).all()
 
     if len(duplicates)>0:
         return make_response('User with specified email already exists', 409)
