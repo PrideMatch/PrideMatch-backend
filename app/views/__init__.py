@@ -1,2 +1,3 @@
-from app.views.user_view import login, register, get_user, update_user, delete_user
+from app.views.user_view import login, register, get_user, update_user, delete_user, add_interest, remove_interest, add_usergame, remove_usergame, get_profile_picture, add_profile_picture, remove_profile_picture, update_profile_picture
 from app.views.recommendations_view import follow, add_to_ignored, get_recommendations_based_off_games, get_recommendations_based_off_interests
+from app.views.forum_view import get_threads_from_section, add_thread_to_section, remove_thread, get_comments_from_thread, add_comment_on_thread, remove_comment

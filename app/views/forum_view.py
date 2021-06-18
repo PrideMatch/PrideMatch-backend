@@ -73,7 +73,7 @@ def get_comments_from_thread():
 
     return make_response(jsonify(comments_json), 200)
 
-@app.route('/forum/comments', method=['POST'])
+@app.route('/forum/comments', methods=['POST'])
 @token_required
 def add_comment_on_thread():
     thread_id=request.args.get('thread_id')
@@ -90,7 +90,7 @@ def add_comment_on_thread():
 
     return make_response('Comment added', 201)
 
-@app.route('/forum/comments', method=['DELETE'])
+@app.route('/forum/comments', methods=['DELETE'])
 @token_required
 def remove_comment():
     comment_id=request.args.get('comment_id')
