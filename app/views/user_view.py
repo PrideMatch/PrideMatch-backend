@@ -2,6 +2,7 @@ import datetime
 import uuid
 import jwt
 import server_secrets
+import os
 from app import app, db
 from app.model import Socials, User, Interest, UserGame, interest
 from flask import json, jsonify, request, send_file
@@ -10,6 +11,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app.views.json_parser import user_to_json
 from app.views.authorization import token_required, verify_user_id
 from io import BytesIO
+from PIL import Image
 
 @app.route('/login', methods=['GET'])
 def login():
@@ -271,16 +273,21 @@ def get_profile_picture():
 @verify_user_id
 def add_profile_picture():
     user_id = request.args.get('user_id')
-    file = request.files['profile_pic']
+    file = request.get_data()
 
     if not user_id or not file:
         return make_response("Bad request", 400)
 
     user = User.query.get_or_404(user_id)
 
-    data = file.read()
-    user.profile_picture = data
+    image = Image.open(BytesIO(file))
+    image = image.resize((300,300),Image.ANTIALIAS)
+    image.save('image.jpg',quality=50,optimize=True)
+    im = open("image.jpg", "rb") 
+    user.profile_picture = im.read()
     db.session.commit()
+    im.close()
+    os.remove("image.jpg")
 
     return make_response('Profile picture added', 201)
 
