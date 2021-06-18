@@ -40,6 +40,13 @@ def register():
     if data.get('password'):
         hashed_pass = generate_password_hash(data.get('password'), method='sha256')
 
+    user = User(id=user_id, username=data.get('username'), email=data.get('email'), password=hashed_pass,
+     gender=data.get('gender'), pronouns=data.get('pronouns'), age=data.get('age'), orientation=data.get('orientation'),
+     about_me=data.get('about_me'), display_pronouns=data.get('display_pronouns'), display_gender=data.get('display_gender'), 
+     display_orientation=data.get('display_orientation'))
+
+    db.session.add(user)
+
     s_json = data.get('socials')
     interests_json = data.get('interests')
     games_json = data.get('games')
@@ -50,21 +57,16 @@ def register():
 
         db.session.add(socials)
 
-        for i in json.loads(interests_json):
+        for i in interests_json:
             interest = Interest(id=str(uuid.uuid4()), user_id=user_id, interest=i)
             db.session.add(interest)
 
-        for g in json.loads(games_json):
-            game = UserGame(id=g, user_id=user_id)
+        for g in games_json:
+            game = UserGame(id=str(uuid.uuid4()), user_id=user_id, game=g)
             db.session.add(game)
     else:
-        return make_response("Bad request", 400)
+        return make_response("Bad request l", 400)
 
-    user = User(id=str(uuid.uuid4()), username=data.get('username'), email=data.get('email'), password=hashed_pass,
-     gender=data.get('gender'), pronouns=data.get('pronouns'), age=data.get('age'), orientation=data.get('orientation'),
-     about_me=data.get('about_me'), display_pronouns=data.get('display_pronouns'), display_gender=data.get('display_gender'), display_orientation=data.get('display_orientation'))
-    
-    db.session.add(user)
     db.session.commit()
 
     return make_response('User created', 201)
