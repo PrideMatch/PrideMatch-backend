@@ -2,7 +2,7 @@ from sqlalchemy.orm import backref
 from app import db
 
 class User(db.Model):
-    def __init__(self, id, username, email, socials, password = '', gender = '', age = None, 
+    def __init__(self, id, username, email, socials, display_orientation, display_gender, display_pronouns, password = '', gender = '', age = None, 
     profile_picture = None, orientation = '', about_me = '', pronouns='', interests = [], games = [], teammates = [], 
     added_users = [], ignored_users = []):
         self.id = id
@@ -21,6 +21,9 @@ class User(db.Model):
         self.teammates = teammates
         self.added_users = added_users
         self.ignored_users = ignored_users
+        self.display_orientation = display_orientation
+        self.display_gender = display_gender
+        self.display_pronouns = display_pronouns
         
 
     id = db.Column(db.String(50), primary_key=True)
@@ -33,6 +36,9 @@ class User(db.Model):
     orientation = db.Column(db.String(20), nullable=True)
     pronouns = db.Column(db.String(20), nullable=True)
     about_me = db.Column(db.String(255), nullable=True)
+    display_orientation = db.Column(db.Boolean(), nullable=False)
+    display_gender = db.Column(db.Boolean(), nullable=False)
+    display_pronouns = db.Column(db.Boolean(), nullable=False)
     socials = db.relationship('Socials', uselist=False, backref='user', lazy=True)
     interests = db.relationship('Interest', backref='user', lazy=True)
     games = db.relationship('UserGame', backref='user', lazy=True)
