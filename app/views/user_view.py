@@ -248,7 +248,7 @@ def get_profile_picture():
     if not picture:
         return make_response("Picture not found", 404)
     
-    return send_file(picture, attachment_filename='profile_pic.jpg', as_attachment=True)
+    return send_file(picture, attachment_filename='profile_pic', as_attachment=True)
 
 @app.route('/user/profile_pic', methods=['POST'])
 @token_required
@@ -281,3 +281,18 @@ def remove_profile_picture():
     db.session.commit()
 
     return make_response('Profile picture removed', 200)
+
+@app.route('/user/profile_pic', methods=['PUT'])
+@token_required
+def update_profile_picture():
+    user_id = request.args.get('user_id')
+
+    if not user_id:
+        return make_response("Bad request", 400)
+
+    user = User.query.get_or_404(user_id)
+
+    user.profile_picture=None
+    db.session.commit()
+
+    return make_response('Profile picture updated', 200)
