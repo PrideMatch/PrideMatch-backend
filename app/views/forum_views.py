@@ -3,7 +3,7 @@ from app import app, db
 from app.model import ForumThread, ForumComment
 from flask.helpers import make_response
 from flask import json, jsonify, request
-from app.views.json_parser import user_to_json
+from app.views.json_parser import forumthread_to_json, forumcomment_to_json
 from app.views.authorization import token_required
 
 @app.route('/forum/threads', methods=['GET'])
@@ -17,7 +17,12 @@ def get_threads_from_section():
     forum_threads = ForumThread.query.filter_by(forum_section=section_name).limit(20).all()
     forum_threads = sorted(forum_threads, key=compare_items_by_date)
 
-    return make_response(jsonify(forum_threads), 200)
+    forum_threads_json = []
+
+    for thread in forum_threads:
+        forum_threads_json.append(forum_threads_json(thread))
+
+    return make_response(jsonify(forum_threads_json), 200)
 
 @app.route('/forum/threads', methods=['POST'])
 @token_required
@@ -61,7 +66,12 @@ def get_comments_from_thread():
     comments = ForumComment.query.filter_by(thread=thread_id).all()
     comments = sorted(comments, key=compare_items_by_date, reverse=True)
 
-    return make_response(jsonify(comments), 200)
+    comments_json = []
+
+    for comment in comments:
+        comments_json.append(forumcomment_to_json(comment))
+
+    return make_response(jsonify(comments_json), 200)
 
 @app.route('/forum/comments', method=['POST'])
 @token_required
