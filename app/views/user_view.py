@@ -306,7 +306,7 @@ def remove_usergame():
             games.append(g.game)
     
     if data.get('game') in games:
-        user_game = UserGame.query.filter_by(user_id=user_id, game=data.game('game')).first()
+        user_game = UserGame.query.filter_by(user_id=user_id, game=data.get('game')).first()
         db.session.delete(user_game)
         db.session.commit()
         return make_response('Game removed', 200)
