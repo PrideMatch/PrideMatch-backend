@@ -1,3 +1,4 @@
+from app.model.unread_follow import UnreadFollow
 import uuid
 from app import app, db
 from app.views.authorization import token_required, verify_user_id
@@ -32,6 +33,10 @@ def follow():
                 added_user_entry = AddedUser.query.filter_by(followed_user_id=user_id).first()
                 db.session.delete(added_user_entry)
 
+                # add notification for the followed user 
+                teammate_notification = UnreadFollow(id=str(uuid.uuid4()), user_id=followed_user_id, followed_by=user_id, teammates=True)
+                db.session.add(teammate_notification)
+
                 # add teammate entries to database
                 db.session.add(follower_teammate)
                 db.session.add(followed_teammate)
@@ -44,6 +49,10 @@ def follow():
     # if followed user didnt add current user before, add added_user entry to the database
     added_user = AddedUser(id=str(uuid.uuid4()), user_id=user_id, followed_user_id=followed_user_id)
     
+    # add notification for the followed user 
+    teammate_notification = UnreadFollow(id=str(uuid.uuid4()), user_id=followed_user_id, followed_by=user_id, teammates=False)
+    db.session.add(teammate_notification)
+
     db.session.add(added_user)
     db.session.commit()
 
