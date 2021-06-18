@@ -34,8 +34,20 @@ def user_to_json(user):
 
     interests_json = json.dumps(interests)
 
-    return json.dumps({'id': user.id, 'username': user.username, 'email': user.email, 'gender': user.gender, 'age': user.age, 
-    'orientation': user.orientation, 'pronouns': user.pronouns, 'about_me': user.about_me, 'socials': json.loads(socials_json), 
+    pronouns = ''
+    if user.display_pronouns:
+        pronouns = user.pronouns
+    
+    gender = ''
+    if user.display_gender:
+        gender = user.gender
+    
+    orientation = ''
+    if user.display_orientation:
+        orientation = user.orientation
+
+    return json.dumps({'id': user.id, 'username': user.username, 'email': user.email, 'gender': gender, 'age': user.age, 
+    'orientation': orientation, 'pronouns': pronouns, 'about_me': user.about_me, 'socials': json.loads(socials_json), 
     'games': json.loads(games_json), 'teammates': json.loads(teammates_json), 'interests': json.loads(interests_json)})
     
 def teammate_to_json(teammate):

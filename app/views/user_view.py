@@ -62,7 +62,7 @@ def register():
 
     user = User(id=str(uuid.uuid4()), username=data.get('username'), email=data.get('email'), password=hashed_pass,
      gender=data.get('gender'), pronouns=data.get('pronouns'), age=data.get('age'), orientation=data.get('orientation'),
-     about_me=data.get('about_me'))
+     about_me=data.get('about_me'), display_pronouns=data.get('display_pronouns'), display_gender=data.get('display_gender'), display_orientation=data.get('display_orientation'))
     
     db.session.add(user)
     db.session.commit()
@@ -110,6 +110,9 @@ def update_user():
     user.orientation=data.get('orientation')
     user.pronouns=data.get('pronouns')
     user.about_me=data.get('about_me')
+    user.display_pronouns=data.get('display_pronouns')
+    user.display_gender=data.get('display_gender')
+    user.display_orientation=data.get('display_orientation')
 
     db.session.commit()
 
