@@ -5,6 +5,7 @@ from flask import jsonify, request
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from app.model import User
+from flask.helpers import make_response
 
 
 def token_required(f):
@@ -36,4 +37,23 @@ def token_required(f):
 
         return f(*args, **kwargs)
     
+    return decorated
+
+def verify_user_id(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get('Authorization')
+
+        if not token:
+            return jsonify({'message' : 'Token is missing'}), 403
+
+        try:
+            data=jwt.decode(token, server_secrets.SECRET_KEY,algorithms=["HS256"])
+            user_id = request.args.get('user_id')
+            if token['id'] != user_id:
+                return make_response('Unauthorized', 401)
+        except:
+            pass
+
+        return f(*args, **kwargs)
     return decorated

@@ -1,6 +1,6 @@
 import uuid
 from app import app, db
-from app.views.authorization import token_required
+from app.views.authorization import token_required, verify_user_id
 from flask import json, jsonify, request
 from flask.helpers import make_response
 from sqlalchemy.sql.expression import func
@@ -8,6 +8,7 @@ from app.model import User, AddedUser, Teammate, IgnoredUser
 
 @app.route('/recommendations/follow/', methods=['POST'])
 @token_required
+@verify_user_id
 def follow():
     user_id = request.args.get('user_id')
     data = request.get_json()
@@ -52,14 +53,13 @@ def follow():
 
 @app.route('/recommendations/ignored', methods=['POST'])
 @token_required
+@verify_user_id
 def add_to_ignored():
     user_id = request.args.get('user_id')
     data = request.get_json()
 
     if not user_id or not data:
         return make_response('Bad request', 400)
-
-    currently_ignored_users = IgnoredUser.query.filter_by(user_id=user_id).all()
 
     ignored_users_json_object = json.loads(data)
     ignored_users_list = ignored_users_json_object.get('users')
@@ -84,6 +84,7 @@ def add_to_ignored():
 
 @app.route('/recommendations/gaming', methods=['GET'])
 @token_required
+@verify_user_id
 def get_recommendations_based_off_games():
     user_id = request.args.get('user_id')
 
@@ -124,6 +125,7 @@ def get_recommendations_based_off_games():
 
 @app.route('/recommendations/interests', methods=['GET'])
 @token_required
+@verify_user_id
 def get_recommendations_based_off_interests():
     user_id = request.args.get('user_id')
 
