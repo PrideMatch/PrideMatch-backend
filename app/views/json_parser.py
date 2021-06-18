@@ -44,3 +44,19 @@ def teammate_to_json(teammate):
 def socials_to_json(socials):
     return json.dumps({'facebook': socials.facebook, 'instagram': socials.instagram,
     'twitter': socials.twitter, 'discord_id': socials.discord_id})
+
+def forumcomment_to_json(comment):
+    return json.dumps({'id': comment.id, 'text': comment.text, 'creation_time': comment.creation_time, 'author': comment.author, 
+    'thread': comment.thread, 'reply_to': comment.reply_to})
+
+def forumthread_to_json(thread):
+    comments = []
+
+    if thread.comments:
+        for c in thread.comments:
+            comments.append(forumcomment_to_json(c))
+
+    comments_json = json.dumps(comments)
+
+    return json.dumps({'id': thread.id, 'author': thread.author, 'title': thread.title, 'creation_time': thread.creation_time,
+    'text': thread.text, 'forum_section': thread.forum_section, 'comments': json.loads(comments_json)})
