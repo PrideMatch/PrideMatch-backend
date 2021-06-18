@@ -42,6 +42,7 @@ class User(db.Model):
     socials = db.relationship('Socials', uselist=False, backref='user', lazy=True)
     interests = db.relationship('Interest', backref='user', lazy=True)
     games = db.relationship('UserGame', backref='user', lazy=True)
+    new_follows = db.relationship('UnreadFollow', backref='user', lazy=True)
     teammates = db.relationship('Teammate', lazy=True)
     added_users = db.relationship('AddedUser', lazy='noload')
     ignored_users = db.relationship('IgnoredUser', lazy='noload')

@@ -11,7 +11,7 @@ def user_to_json(user):
     games = []
     teammates = []
     interests = []
-
+    new_follows = []
 
     if user.games:
         for x in user.games:
@@ -34,6 +34,12 @@ def user_to_json(user):
 
     interests_json = json.dumps(interests)
 
+    if user.new_follows:
+        for f in user.new_follows:
+            new_follows.append(unreadfollow_to_json(f))
+
+    new_follows_json = json.dumps(new_follows)
+        
     pronouns = ''
     if user.display_pronouns:
         pronouns = user.pronouns
@@ -48,7 +54,7 @@ def user_to_json(user):
 
     return json.dumps({'id': user.id, 'username': user.username, 'email': user.email, 'gender': gender, 'age': user.age, 
     'orientation': orientation, 'pronouns': pronouns, 'about_me': user.about_me, 'socials': json.loads(socials_json), 
-    'games': json.loads(games_json), 'teammates': json.loads(teammates_json), 'interests': json.loads(interests_json)})
+    'games': json.loads(games_json), 'teammates': json.loads(teammates_json), 'interests': json.loads(interests_json), 'new_follows': json.loads(new_follows_json)})
     
 def teammate_to_json(teammate):
     return json.dumps({teammate.teammate_id})
@@ -72,3 +78,6 @@ def forumthread_to_json(thread):
 
     return json.dumps({'id': thread.id, 'author': thread.author, 'title': thread.title, 'creation_time': thread.creation_time,
     'text': thread.text, 'forum_section': thread.forum_section, 'comments': json.loads(comments_json)})
+
+def unreadfollow_to_json(follow):
+    return json.dumps({'id': follow.id, 'followed_by': follow.followed_by, 'teammates': follow.teammates})

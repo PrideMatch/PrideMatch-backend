@@ -79,6 +79,7 @@ def get_user():
     
     if token['id'] != user_id:
         user.teammates = []
+        user.new_follows = []
 
     return make_response(user_to_json(user), 200)
 

@@ -111,7 +111,20 @@ RESPONSE:
     "interests": [ "interest1", "interest2", "interest3"],
     "games": [ "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f"],
     "teammates": [ "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f"],
-    "new_follows": [ "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f"]
+    "new_follows": 
+    [ 
+    	{
+		"id": "d69-4170-45d2-ad81-3e36794f",
+		"followed_by":"d69-4170-45d2-ad81-3e36794f",
+		"teammates": True
+	},
+	
+	{
+		"id": "d69-4170-45d2-ad81-3e36794f"
+		"followed_by":"d69-4170-45d2-ad81-3e36794f",
+		"teammates": True
+	}		
+    ]
 			
 }
 
