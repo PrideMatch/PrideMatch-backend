@@ -1,0 +1,11 @@
+steps:
+  - uses: actions/checkout@v2
+    name: Check out code
+    
+  - uses: mr-smithers-excellent/docker-build-push@v5
+    with:
+      image: pridematch-backend
+      registry: 688066603247.dkr.ecr.us-west-2.amazonaws.com
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
