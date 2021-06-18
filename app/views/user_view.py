@@ -73,9 +73,13 @@ def register():
 @token_required
 def get_user():
     user_id = request.args.get('user_id')
+    token = request.headers.get('Authorization')
 
     user = User.query.filter_by(id=user_id).first()
     
+    if token['id'] != user_id:
+        user.teammates = []
+
     return make_response(user_to_json(user), 200)
 
 @app.route('/user', methods=['PUT'])
