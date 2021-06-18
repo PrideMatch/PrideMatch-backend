@@ -1,4 +1,5 @@
 import datetime
+from os import dup
 import uuid
 import jwt
 import server_secrets
@@ -35,6 +36,19 @@ def register():
     data = request.get_json()
 
     user_id = str(uuid.uuid4())
+
+    if not data:
+        return make_response('Bad request', 400)
+
+    duplicates = User.query.filter_by(username=data.get('username')).all()
+
+    if len(duplicates)>0:
+        return make_response('User with specified username already exists', 409)
+    
+    duplicates = User.query.filter_by(username=data.get('email')).all()
+
+    if len(duplicates)>0:
+        return make_response('User with specified email already exists', 409)
 
     hashed_pass = ''
     if data.get('password'):
