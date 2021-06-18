@@ -249,3 +249,21 @@ def get_profile_picture():
         return make_response("Picture not found", 404)
     
     return send_file(picture, attachment_filename='profile_pic.jpg', as_attachment=True)
+
+@app.route('/user/profile_pic', methods=['POST'])
+@token_required
+def add_profile_picture():
+    user_id = request.args.get('user_id')
+    file = request.files['profile_pic']
+
+    if not user_id or not file:
+        return make_response("Bad request", 400)
+
+    user = User.query.get_or_404(user_id)
+
+    data = file.read()
+    user.profile_picture = data
+    db.session.commit()
+
+    return make_response('Profile picture added', 201)
+
