@@ -3,7 +3,7 @@ import uuid
 import jwt
 import server_secrets
 from app import app, db
-from app.model import Socials, User, Interest, UserGame, interest
+from app.model import Socials, User, Interest, UserGame, AddedUser, IgnoredUser
 from flask import json, jsonify, request, send_file
 from flask.helpers import make_response
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -141,6 +141,30 @@ def delete_user():
 
     if not user:
         return make_response("Bad request", 400)
+
+    if user.socials:
+        db.session.delete(user.socials)
+
+    for i in user.interests:
+        db.session.delete(i)
+    
+    for g in user.games:
+        db.session.delete(g)
+    
+    for f in user.new_follows:
+        db.session.delete(f)
+
+    for t in user.teammates:
+        db.session.delete(t)
+
+    added_users = AddedUser.query.filter_by(user_id=user_id).all()
+    ignored_users = IgnoredUser.query.filter_by(user_id=user_id).all()
+
+    for u in added_users:
+        db.session.delete(u)
+    
+    for u in ignored_users:
+        db.session.delete(u)
 
     db.session.delete(user)
     db.session.commit()
