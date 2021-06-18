@@ -72,7 +72,7 @@ def register():
             db.session.add(interest)
 
         for g in games_json:
-            game = UserGame(id=g, user_id=user_id)
+            game = UserGame(id=str(uuid.uuid4()), user_id=user_id, game=g)
             db.session.add(game)
     else:
         return make_response("Bad request", 400)
