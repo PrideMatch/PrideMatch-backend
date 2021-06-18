@@ -67,11 +67,11 @@ def register():
 
         db.session.add(socials)
 
-        for i in json.loads(interests_json):
+        for i in interests_json:
             interest = Interest(id=str(uuid.uuid4()), user_id=user_id, interest=i)
             db.session.add(interest)
 
-        for g in json.loads(games_json):
+        for g in games_json:
             game = UserGame(id=g, user_id=user_id)
             db.session.add(game)
     else:

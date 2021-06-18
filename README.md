@@ -29,6 +29,7 @@ STATUS CODE: 200 OK
 
 ```jsx
 {
+	"id": "d69-4170-45d2-ad81-3e36794f",
 	"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjI1ODI1OTcxLTAyNjMtNGY5Yy1hZjlmLWM5ZDQ5YTc4ZjcwYyIsImV4cCI6MTYyMzk2ODczN30.eTQVjLAw_FGiyqQXOSp5n3ft_fzFvSYrxr6y8ZO_Xkk"
 }
 
@@ -56,9 +57,9 @@ BODY:
     "orientation": "heterosexual",
     "pronouns": "she/her",
     "about_me": "Lorem ipsum or whatever",
-    "display_orientation": True,
-    "display_gender": True,
-    "display_pronouns": True,
+    "display_orientation": true,
+    "display_gender": true,
+    "display_pronouns": true,
     "socials": 
     {
         "facebook": "linktofacebook",
@@ -116,13 +117,13 @@ RESPONSE:
     	{
 		"id": "d69-4170-45d2-ad81-3e36794f",
 		"followed_by":"d69-4170-45d2-ad81-3e36794f",
-		"teammates": True
+		"teammates": true
 	},
 	
 	{
 		"id": "d69-4170-45d2-ad81-3e36794f"
 		"followed_by":"d69-4170-45d2-ad81-3e36794f",
-		"teammates": True
+		"teammates": true
 	}		
     ]
 			
@@ -156,9 +157,9 @@ BODY (json):
     "orientation": "heterosexual",
     "pronouns": "she/her",
     "about_me": "Lorem ipsum or whatever",
-    "display_orientation": True,
-    "display_gender": True,
-    "display_pronouns": True,
+    "display_orientation": true,
+    "display_gender": true,
+    "display_pronouns": true,
     "socials": 
     {
         "facebook": "linktofacebook",
