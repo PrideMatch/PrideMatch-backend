@@ -76,14 +76,15 @@ def register():
 def get_user():
     user_id = request.args.get('user_id')
     token = request.headers.get('Authorization')
+    token_data = jwt.decode(token, server_secrets.SECRET_KEY,algorithms=["HS256"])
 
     user = User.query.filter_by(id=user_id).first()
     
-    if token['id'] != user_id:
+    if token_data['id'] != user_id:
         user.teammates = []
         user.new_follows = []
 
-    return make_response(user_to_json(user), 200)
+    return user_to_json(user), 200
 
 @app.route('/user', methods=['PUT'])
 @token_required
