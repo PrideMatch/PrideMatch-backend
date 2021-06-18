@@ -11,6 +11,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app.views.json_parser import user_to_json
 from app.views.authorization import token_required, verify_user_id
 from io import BytesIO
+from PIL import Image
 
 @app.route('/login', methods=['GET'])
 def login():
@@ -312,15 +313,13 @@ def get_profile_picture():
 @verify_user_id
 def add_profile_picture():
     user_id = request.args.get('user_id')
-    file = request.files['profile_pic']
+    file = request.get_data()
 
     if not user_id or not file:
         return make_response("Bad request", 400)
 
     user = User.query.get_or_404(user_id)
-
-    data = file.read()
-    user.profile_picture = data
+    user.profile_picture = file
     db.session.commit()
 
     return make_response('Profile picture added', 201)
