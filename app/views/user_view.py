@@ -267,3 +267,17 @@ def add_profile_picture():
 
     return make_response('Profile picture added', 201)
 
+@app.route('/user/profile_pic', methods=['DELETE'])
+@token_required
+def remove_profile_picture():
+    user_id = request.args.get('user_id')
+
+    if not user_id:
+        return make_response("Bad request", 400)
+
+    user = User.query.get_or_404(user_id)
+
+    user.profile_picture=None
+    db.session.commit()
+
+    return make_response('Profile picture removed', 200)
