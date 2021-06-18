@@ -2,9 +2,9 @@ from sqlalchemy.orm import backref
 from app import db
 
 class User(db.Model):
-    def __init__(self, id, username, email, socials, display_orientation, display_gender, display_pronouns, password = '', gender = '', age = None, 
+    def __init__(self, id, username, email, display_orientation, display_gender, display_pronouns, password = '', gender = '', age = None, 
     profile_picture = None, orientation = '', about_me = '', pronouns='', interests = [], games = [], teammates = [], 
-    added_users = [], ignored_users = []):
+    added_users = [], ignored_users = [], socials=None):
         self.id = id
         self.username = username
         self.password = password

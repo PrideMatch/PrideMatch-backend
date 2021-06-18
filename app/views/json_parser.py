@@ -1,10 +1,16 @@
 from flask import json
 
 def usergame_to_json(user_game):
-    return json.dumps({user_game.game})
+    if user_game.game:
+        return user_game.game
+    else:
+        return "null"
 
 def interest_to_json(interest):
-    return json.dumps({interest.interest})
+    if interest.interest:
+        return interest.interest
+    else:
+        return "null"
 
 def user_to_json(user):
 
@@ -12,12 +18,6 @@ def user_to_json(user):
     teammates = []
     interests = []
     new_follows = []
-
-    if user.games:
-        for x in user.games:
-            games.append(usergame_to_json(x))
-    
-    games_json = json.dumps(games)
 
     if user.socials:
         socials_json = socials_to_json(user.socials)
@@ -39,6 +39,12 @@ def user_to_json(user):
             new_follows.append(unreadfollow_to_json(f))
 
     new_follows_json = json.dumps(new_follows)
+
+    if user.games:
+        for x in user.games:
+            games.append(usergame_to_json(x))
+    
+    games_json = json.dumps(games)
         
     pronouns = ''
     if user.display_pronouns:
@@ -57,15 +63,45 @@ def user_to_json(user):
     'games': json.loads(games_json), 'teammates': json.loads(teammates_json), 'interests': json.loads(interests_json), 'new_follows': json.loads(new_follows_json)})
     
 def teammate_to_json(teammate):
-    return json.dumps({teammate.teammate_id})
+    if teammate.teammate_id:
+        return teammate.teammate_id
+    else:
+        return "null"
 
 def socials_to_json(socials):
-    return json.dumps({'facebook': socials.facebook, 'instagram': socials.instagram,
-    'twitter': socials.twitter, 'discord_id': socials.discord_id})
+
+    if socials.facebook:
+        facebook = socials.facebook
+    else:
+        facebook = "null"
+
+    if socials.instagram:
+        instagram = socials.instagram
+    else:
+        instagram = "null"
+
+    if socials.twitter:
+        twitter = socials.twitter
+    else:
+        twitter = "null"
+
+    if socials.discord_id:
+        discord_id = socials.discord_id
+    else:
+        discord_id = "null"
+
+    return json.dumps({'facebook': facebook, 'instagram': instagram,
+    'twitter': twitter, 'discord_id': discord_id})
 
 def forumcomment_to_json(comment):
+
+    if comment.reply_to:
+        reply_to = comment.reply_to
+    else:
+        reply_to = "null"
+
     return json.dumps({'id': comment.id, 'text': comment.text, 'creation_time': comment.creation_time, 'author': comment.author, 
-    'thread': comment.thread, 'reply_to': comment.reply_to})
+    'thread': comment.thread, 'reply_to': reply_to})
 
 def forumthread_to_json(thread):
     comments = []
