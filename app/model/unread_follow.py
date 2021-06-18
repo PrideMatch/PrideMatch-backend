@@ -7,3 +7,4 @@ class UnreadFollow(db.Model):
 
     id = db.Column(db.String(50), primary_key=True)
     followed_by = db.Column(db.String(50), db.ForeignKey('user.id'))
+    teammates = db.Column(db.Boolean(), nullable=False)
