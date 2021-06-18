@@ -54,11 +54,11 @@ BODY:
     "gender": "female",
     "age": 20,
     "orientation": "heterosexual",
-		"pronouns": "she/her",
+    "pronouns": "she/her",
     "about_me": "Lorem ipsum or whatever",
-		"display_orientation": "True",
-		"display_gender": "True",
-		"display_pronouns": "True",
+    "display_orientation": True,
+    "display_gender": True,
+    "display_pronouns": True,
     "socials": 
     {
         "facebook": "linktofacebook",
@@ -93,13 +93,13 @@ RESPONSE:
 
 ```jsx
 {
-		"id": "d69-4170-45d2-ad81-3e36794f",
+    "id": "d69-4170-45d2-ad81-3e36794f",
     "username": "name",
     "email": "name@gmail.com",
     "gender": "female",
     "age": 20,
     "orientation": "heterosexual",
-		"pronouns": "she/her",
+    "pronouns": "she/her",
     "about_me": "Lorem ipsum or whatever",
     "socials": 
     {
@@ -108,10 +108,10 @@ RESPONSE:
         "twitter": "linktotwitter",
         "discord_id": "discord_id"
     },
-		"interests": [ "interest1", "interest2", "interest3"],
-		"games": [ "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f"],
-		"teammates": [ "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f"],
-		"new_follows": [ "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f"]
+    "interests": [ "interest1", "interest2", "interest3"],
+    "games": [ "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f"],
+    "teammates": [ "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f"],
+    "new_follows": [ "d69-4170-45d2-ad81-3e36794f", "d69-4170-45d2-ad81-3e36794f"]
 			
 }
 
@@ -141,11 +141,11 @@ BODY (json):
     "gender": "female",
     "age": 20,
     "orientation": "heterosexual",
-		"pronouns": "she/her",
+    "pronouns": "she/her",
     "about_me": "Lorem ipsum or whatever",
-		"display_orientation": "True",
-		"display_gender": "True",
-		"display_pronouns": "True",
+    "display_orientation": True,
+    "display_gender": True,
+    "display_pronouns": True,
     "socials": 
     {
         "facebook": "linktofacebook",
